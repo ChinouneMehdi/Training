@@ -12,7 +12,7 @@ program main
   real(sp), allocatable :: highestreturn(:), lowestmode(:)
   real(dp), allocatable :: hr_lat(:), hr_lon(:), lm_lat(:), lm_lon(:)
   !
-  character(len=*), parameter :: filename = "GEDI02_A_2019219212118_O03696_T01120_02_001_01.h5"
+  character(len=*), parameter :: filename = "GEDI02_A_2019162100400_O02804_T04388_02_001_01.h5"
   character(len=*), parameter :: filename2 = "data/gedi.h5"
   integer(hid_t) :: file_id, grp_id, dset_id, dspace_id
   integer(hid_t) :: file_id2, grp_id2, dset_id2, dspace_id2
@@ -29,7 +29,7 @@ program main
   call get_environment_variable( "PWD", directory, dir_len )
   ! Download Required Data
   call execute_command_line( "wget &
-    &https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_A.001/2019.08.07/"//filename//" -nv" )
+    &https://e4ftl01.cr.usgs.gov/GEDI/GEDI02_A.001/2019.06.11/"//filename//" -nv" )
   ! Open Fortran Interface
   call h5open_f(error)
   ! Open File

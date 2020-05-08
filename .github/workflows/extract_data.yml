@@ -49,6 +49,7 @@ jobs:
         build/extract_hgt_gedi
 
     - uses: actions/upload-artifact@v2
+      if: ${{ matrix.image_tag == 'trunk' && matrix.build_type == 'Release' }}
       with:
         name: extracted_data
         path: data/

@@ -1,0 +1,53 @@
+name: Extract GEDI Data
+
+on:
+  push:
+    paths:
+      - "hdf5/*"
+      - ".github/workflows/extract_data.yml"
+  schedule:
+    - cron: '0 2 * * 1'
+
+jobs:
+  Build:
+
+    name: build
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        image_tag: [old, stable, trunk]
+        build_type: [Debug, Release]
+
+    container: chinoune/debian-gfortran-testing:${{ matrix.image_tag }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Add LPDAAC login data
+      env:
+        USERNAME: ${{ secrets.LPDAAC_USERNAME }}
+        PASSWORD: ${{ secrets.LPDAAC_PASSWORD }}
+      run: |
+        echo machine urs.earthdata.nasa.gov >> ~/.netrc
+        echo http-user="$USERNAME" >> ~/.wgetrc
+        echo http-password="$PASSWORD" >> ~/.wgetrc
+
+    - name: Configuring
+      run: |
+        mkdir build && cd build
+        cmake ../hdf5 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DHDF5_ROOT=/usr/local/HDF_Group/HDF5/1.12.0
+
+    - name: Building
+      run: make extract_hgt_gedi -C build -j$(nproc)
+
+    - name: Running
+      run: |
+        mkdir data
+        build/extract_hgt_gedi
+
+    - uses: actions/upload-artifact@v2
+      with:
+        path: data/

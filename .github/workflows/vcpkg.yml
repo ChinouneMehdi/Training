@@ -1,0 +1,28 @@
+name: VCPKG hashfiles
+
+on:
+  push:
+    paths:
+      - ".github/workflows/vcpkg.yml"
+
+jobs:
+  Build:
+
+    name: build
+
+    runs-on: windows-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+
+    - name: Calculate differnet hashfiles
+      run: |
+        echo "hash installed ${{ hashFiles('C:\vcpkg\installed') }}"
+        echo "hash status ${{ hashFiles('C:\vcpkg\installed\vcpkg\status') }}"
+        vcpkg install zlib --triplet x64-windows
+        vcpkg list
+        cat C:\vcpkg\installed\vcpkg\status
+        echo "hash installed  ${{ hashFiles('C:\vcpkg\installed') }}"
+        echo "hash installed  ${{ hashFiles('C:\vcpkg\installed\vcpkg\status') }}"
